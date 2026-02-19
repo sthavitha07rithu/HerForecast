@@ -213,15 +213,15 @@ Each row represents one prediction instance.
 
 HerForecast is guided by three principles:
 
-### Translate Data into Human States
+#### Translate Data into Human States
 
 Not dashboards. Not scores. Not warnings.
 
-### Avoid Anxiety Framing
+#### Avoid Anxiety Framing
 
 No alerts. No deficit language. No performance metrics.
 
-### Respect Biological Rhythms
+#### Respect Biological Rhythms
 
 Cyclical shifts are normal, not problems to optimize away.
 
@@ -259,9 +259,8 @@ It introduces a preparedness intelligence layer that contextualizes daily physio
 ## 14. Disclaimer
 
 HerForecast is an experimental intelligence prototype designed for educational and research purposes.
-It does **not** provide medical advice, diagnosis, or treatment.
 
-```
+It does **not** provide medical advice, diagnosis, or treatment.
 
 ---
 
