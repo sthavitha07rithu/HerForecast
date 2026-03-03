@@ -8,8 +8,7 @@ import traceback
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Load the model on startup
-    load_model()
+    print("Startup complete (demo mode)")
     yield
 
 app = FastAPI(
