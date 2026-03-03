@@ -4,7 +4,7 @@ from typing import Dict
 PHASE_TO_MOOD: Dict[str, str] = {
     "Menstrual": "Rest & Restore",
     "Follicular": "Light & Energized",
-    "Fertility": "Magnetic & Expressive",
+    "Ovulation": "Magnetic & Expressive",
     "Luteal": "Reflective & Deep"
 }
 

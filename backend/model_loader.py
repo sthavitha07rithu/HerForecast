@@ -2,6 +2,7 @@ import sys
 import os
 import joblib
 from typing import List, Any
+from sklearn.pipeline import Pipeline
 
 # --- FIX FOR LEGACY PICKLE NAMESPACE (src -> backend.src) ---
 
@@ -11,7 +12,6 @@ import backend.src.data as data
 import backend.src.config as config
 import backend.src.modeling as modeling
 
-# Map old training-time module paths to current backend structure
 sys.modules["src"] = backend_src
 sys.modules["src.preprocessing"] = preprocessing
 sys.modules["src.data"] = data
@@ -20,24 +20,16 @@ sys.modules["src.modeling"] = modeling
 
 # -------------------------------------------------------------
 
-# Global variables to store loaded model components
 pipeline: Any = None
 feature_columns: List[str] = []
 label_classes: List[str] = []
 
 
 def load_model(model_filename: str = "phase_model.joblib") -> None:
-    """
-    Load the scikit-learn pipeline and metadata from the joblib file.
-    This should be called once at application startup.
-    """
     global pipeline, feature_columns, label_classes
 
     try:
-        # Get absolute path to this file's directory (backend/)
         base_dir = os.path.dirname(os.path.abspath(__file__))
-
-        # Construct full path to model file
         model_path = os.path.join(base_dir, model_filename)
 
         if not os.path.exists(model_path):
@@ -45,9 +37,23 @@ def load_model(model_filename: str = "phase_model.joblib") -> None:
 
         model_data = joblib.load(model_path)
 
-        pipeline = model_data["pipeline"]
-        feature_columns = model_data["feature_columns"]
-        label_classes = model_data["label_classes"]
+        # Case 1: Saved as dict with metadata
+        if isinstance(model_data, dict):
+            pipeline = model_data.get("pipeline")
+            feature_columns = model_data.get("feature_columns", [])
+            label_classes = model_data.get("label_classes", [])
+
+        # Case 2: Saved directly as sklearn Pipeline
+        elif isinstance(model_data, Pipeline):
+            pipeline = model_data
+            feature_columns = []   # Not available
+            label_classes = []
+
+        else:
+            raise ValueError("Unsupported model file format.")
+
+        if pipeline is None:
+            raise ValueError("Pipeline could not be loaded.")
 
         print(f"Model loaded successfully from: {model_path}")
 
@@ -56,21 +62,14 @@ def load_model(model_filename: str = "phase_model.joblib") -> None:
 
 
 def get_pipeline():
-    """Return the loaded pipeline."""
     if pipeline is None:
-        raise RuntimeError("Model not loaded. Call load_model() first.")
+        raise RuntimeError("Model not loaded.")
     return pipeline
 
 
 def get_feature_columns():
-    """Return the expected feature columns."""
-    if not feature_columns:
-        raise RuntimeError("Model not loaded. Call load_model() first.")
     return feature_columns
 
 
 def get_label_classes():
-    """Return the label classes."""
-    if not label_classes:
-        raise RuntimeError("Model not loaded. Call load_model() first.")
     return label_classes
