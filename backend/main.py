@@ -1,15 +1,23 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from .model_loader import load_model, get_pipeline, get_feature_columns, get_label_classes
+from .model_loader import load_model, get_pipeline, get_feature_columns
 from .schemas import PredictRequest, PredictResponse, HealthResponse, ModelInfoResponse
 from .prediction_service import preprocess_data, predict_phase
 import traceback
 
+
+# --- Load model once at startup ---
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("Startup complete (demo mode)")
+    try:
+        load_model()
+        print("Model loaded successfully at startup")
+    except Exception as e:
+        print("Model failed to load:", str(e))
+        raise e
     yield
+
 
 app = FastAPI(
     title="Inner Weather Backend",
@@ -18,14 +26,15 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Enable CORS
+# Enable CORS (safe for demo; restrict in production)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for development
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 @app.get("/health", response_model=HealthResponse)
 async def health_check():
@@ -37,6 +46,7 @@ async def health_check():
         return HealthResponse(status="ok", model_loaded=model_loaded)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Health check failed: {str(e)}")
+
 
 @app.post("/predict", response_model=PredictResponse)
 async def predict(request: PredictRequest):
@@ -66,12 +76,14 @@ async def predict(request: PredictRequest):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
 
+
 @app.get("/users")
 async def get_users():
     """
     Return list of available user IDs.
     """
     return {"users": [1, 2, 3, 4, 5, 6]}
+
 
 @app.get("/model/info", response_model=ModelInfoResponse)
 async def model_info():
@@ -87,6 +99,7 @@ async def model_info():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get model info: {str(e)}")
 
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)
