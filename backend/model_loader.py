@@ -8,7 +8,7 @@ feature_columns: List[str] = []
 label_classes: List[str] = []
 
 
-def load_model(model_filename: str = "phase_prediction_model.joblib") -> None:
+def load_model(model_filename: str = "phase_model.joblib") -> None:
     """
     Load the scikit-learn pipeline and metadata from the joblib file.
     This should be called once at application startup.
