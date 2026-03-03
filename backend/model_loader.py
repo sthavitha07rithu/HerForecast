@@ -1,6 +1,24 @@
+import sys
 import os
 import joblib
 from typing import List, Any
+
+# --- FIX FOR LEGACY PICKLE NAMESPACE (src -> backend.src) ---
+
+import backend.src as backend_src
+import backend.src.preprocessing as preprocessing
+import backend.src.data as data
+import backend.src.config as config
+import backend.src.modeling as modeling
+
+# Map old training-time module paths to current backend structure
+sys.modules["src"] = backend_src
+sys.modules["src.preprocessing"] = preprocessing
+sys.modules["src.data"] = data
+sys.modules["src.config"] = config
+sys.modules["src.modeling"] = modeling
+
+# -------------------------------------------------------------
 
 # Global variables to store loaded model components
 pipeline: Any = None
