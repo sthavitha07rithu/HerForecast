@@ -2,23 +2,7 @@ import WeatherHero from '../components/WeatherHero';
 import InsightsSection from '../components/InsightsSection';
 import ForecastSection from '../components/ForecastSection';
 import CycleBanner from '../components/CycleBanner';
-import { cyclePhases, type CyclePhase } from '../data/cycleData';
-
-interface PredictionInfo {
-    confidence: number;
-    dayInStudy: number;
-    userId: number;
-    source: 'api' | 'fallback';
-}
-
-interface HomePageProps {
-    cyclePhase: CyclePhase;
-    onCyclePhaseChange: (phase: CyclePhase) => void;
-    predictionInfo: PredictionInfo | null;
-    availableUsers: number[];
-    selectedUser: number | null;
-    onUserChange: (id: number) => void;
-}
+import { cyclePhases } from '../data/cycleData';
 
 export default function HomePage({
     cyclePhase,
@@ -27,12 +11,11 @@ export default function HomePage({
     availableUsers,
     selectedUser,
     onUserChange,
-}: HomePageProps) {
+}) {
     const data = cyclePhases[cyclePhase];
 
     return (
         <>
-            {/* ML Prediction Badge */}
             {predictionInfo && predictionInfo.source === 'api' && (
                 <div style={{
                     display: 'flex',
@@ -67,8 +50,7 @@ export default function HomePage({
                 </div>
             )}
 
-            {/* User Selector */}
-            {availableUsers.length > 1 && (
+            {availableUsers?.length > 1 && (
                 <div style={{
                     display: 'flex',
                     justifyContent: 'center',
@@ -77,18 +59,6 @@ export default function HomePage({
                     <select
                         value={selectedUser ?? ''}
                         onChange={(e) => onUserChange(Number(e.target.value))}
-                        style={{
-                            background: 'rgba(255, 255, 255, 0.35)',
-                            backdropFilter: 'blur(8px)',
-                            border: '1px solid rgba(255, 255, 255, 0.5)',
-                            borderRadius: 'var(--radius-md)',
-                            padding: '6px 12px',
-                            fontFamily: 'var(--font-body)',
-                            fontSize: '0.7rem',
-                            color: 'var(--text-secondary)',
-                            cursor: 'pointer',
-                            outline: 'none',
-                        }}
                     >
                         {availableUsers.map((id) => (
                             <option key={id} value={id}>
