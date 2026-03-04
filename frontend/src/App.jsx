@@ -1,9 +1,5 @@
-import ForecastForm from "./ForecastForm";
+import HomePage from "./pages/HomePage";
 
 export default function App() {
-  return (
-    <div>
-      <ForecastForm />
-    </div>
-  );
+  return <HomePage />;
 }
