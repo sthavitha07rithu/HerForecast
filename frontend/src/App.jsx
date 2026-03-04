@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { useState } from "react";
 
 import HomePage from "./pages/HomePage";
@@ -15,8 +15,40 @@ export default function App() {
   const [availableUsers] = useState([1]);
   const [selectedUser, setSelectedUser] = useState(1);
 
+  const navStyle = {
+    display: "flex",
+    justifyContent: "center",
+    gap: "28px",
+    padding: "14px",
+    background: "rgba(255,255,255,0.35)",
+    backdropFilter: "blur(10px)",
+    borderBottom: "1px solid rgba(255,255,255,0.4)",
+    position: "sticky",
+    top: 0,
+    zIndex: 1000,
+    fontFamily: "var(--font-body)"
+  };
+
+  const linkStyle = {
+    textDecoration: "none",
+    fontSize: "0.8rem",
+    fontWeight: 500,
+    color: "var(--text-secondary)"
+  };
+
   return (
     <BrowserRouter>
+
+      {/* Navigation Bar */}
+      <nav style={navStyle}>
+        <Link style={linkStyle} to="/">Home</Link>
+        <Link style={linkStyle} to="/trends">Trends</Link>
+        <Link style={linkStyle} to="/reflection">Reflection</Link>
+        <Link style={linkStyle} to="/simulate">Simulate</Link>
+        <Link style={linkStyle} to="/chat">Chat</Link>
+        <Link style={linkStyle} to="/settings">Settings</Link>
+      </nav>
+
       <Routes>
 
         <Route
@@ -40,6 +72,7 @@ export default function App() {
         <Route path="/settings" element={<SettingsPage />} />
 
       </Routes>
+
     </BrowserRouter>
   );
 }
